@@ -44,16 +44,16 @@ import java.nio.ByteBuffer;
 @SuppressWarnings("unused")
 public class Heartbeat implements RobocolParsable {
 
-  public enum Token { EMPTY }
+  public enum Token { EMPTY } /// tbd
 
   public static final short PAYLOAD_SIZE = 10;
   public static final short BUFFER_SIZE = PAYLOAD_SIZE + RobocolParsable.HEADER_LENGTH;
-  public static final short MAX_SEQUENCE_NUMBER = 10000;
+  public static final short MAX_SEQUENCE_NUMBER = 10000; /// Seems like pretty-low-level protocol stuff?
 
-  private static final double SECOND_IN_NANO = 1000000000;
+  private static final double SECOND_IN_NANO = 1000000000; /// Because this changes based on configuration. ._.
 
   // this variable needs to be protected by a lock
-  private static short sequenceNumberGen = 0;
+  private static short sequenceNumberGen = 0; /// ^^^ does that mean "todo"... T_T
 
   private long timestamp;
   private short sequenceNumber;
@@ -154,7 +154,7 @@ public class Heartbeat implements RobocolParsable {
     return String.format("Heartbeat - seq: %4d, time: %d", sequenceNumber, timestamp);
   }
 
-  private synchronized static short genNextSequenceNumber() {
+  private synchronized static short genNextSequenceNumber() { /// Oh my... "synchronized"... plus this sequence number thing is pretty low-level...
     short next = sequenceNumberGen;
     sequenceNumberGen += 1;
     if (sequenceNumberGen > MAX_SEQUENCE_NUMBER) sequenceNumberGen = 0;

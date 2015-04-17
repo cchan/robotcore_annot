@@ -55,26 +55,30 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * Takes RobocolDatagram messages, converts them into the appropriate data type, and then passes it
  * to the current EventLoop.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings("unused") /// oh my word
 public class EventLoopManager {
 
-  private static final boolean DEBUG = false;
+  private static final boolean DEBUG = false; /// Logging functions
   private static final int HEARTBEAT_WAIT_DELAY = 250; // in milliseconds
-  private static final int MAX_COMMAND_CACHE = 8;
-  private static final int MAX_COMMAND_ATTEMPTS = 10;
+  private static final int MAX_COMMAND_CACHE = 8; /// Items are "scheduled" into the system, and loaded into a cache of size up to 8
+  private static final int MAX_COMMAND_ATTEMPTS = 10; /// Every 100ms it tries sending everything in the cache
+														/// Each item has up to 10 tries
   private static final int SOCKET_SCHEDULED_SEND_INTERVAL = 100; // in milliseconds
 
+  /// I don't really know what these are supposed to do, but they seem to be error messages or something.
   public final static String SYSTEM_TELEMETRY = "SYSTEM_TELEMETRY";
   public static final String ROBOT_BATTERY_LEVEL_KEY = "Robot Battery Level";
   public static final String RC_BATTERY_LEVEL_KEY = "RobotController Battery Level";
   public static final String RESTART_OPMODE = "RESTART_OPMODE";
   public static final String OPMODE_RESTART_FINISHED = "OPMODE_RESTART_FINISHED";
 
+  /// Simply doesn't do anything.
   private static final EventLoop EMPTY_EVENT_LOOP = new EmptyEventLoop();
 
   // If no heartbeat is received in this amount of time, forceable shut down
   // the robot
-  private static final double SECONDS_UNTIL_FORCED_SHUTDOWN = 2.0;
+  private static final double SECONDS_UNTIL_FORCED_SHUTDOWN = 2.0; /// Cool new feature! It sends a "heartbeat" every HEARTBEAT_WAIT_DELAY ms.
+																	/// If it doesn't receive a heartbeat it tries to handleDroppedConnection gracefully.
 
   /**
    * Callback to monitor when event loop changes state
@@ -267,17 +271,17 @@ public class EventLoopManager {
     }
   }
 
-  public void handleDroppedConnection(){
+  public void handleDroppedConnection(){ /// End everything! (switch to "default op mode" which apparently neutralizes everything?)
     clientAddr = null; // assume this client is no longer connected
     OpModeManager opModeManager = eventLoop.getOpModeManager();
-    if (!waitingForRestart) {
+    if (!waitingForRestart) { /// Later used to send a RESTART_OPMODE
       lastActiveOpMode = opModeManager.getActiveOpModeName();
       waitingForRestart = true;
     }
     String msg = "Lost connection while running op mode: " + lastActiveOpMode;
     changeState(State.DROPPED_CONNECTION);
 
-    if (!lastActiveOpMode.equals(OpModeManager.DEFAULT_OP_MODE_NAME)) {
+    if (!lastActiveOpMode.equals(OpModeManager.DEFAULT_OP_MODE_NAME)) { /// Got rekt because the Default Op Mode has a dropped connection
       RobotLog.setGlobalErrorMsg(msg);
     }
     RobotLog.i(msg);
