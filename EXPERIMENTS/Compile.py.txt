@@ -1,0 +1,28 @@
+compile.py
+foreach *.jftc file in current directory
+-Split classes into different files with proper names, register them into Manager, various imports and stuff
+-motor stuff from central config - declarations and matchings
+-Put it into proper directory in file
+-compile and load onto phone
+
+-should add libraries - joystick thresholding automatically, etc. - maybe the motor stuff could be not pasted in but instead be part of a library?
+
+
+
+EXAMPLE
+
+-----Hardware.json-----
+{
+motorThrower:{type:"motor",reverse:true}, //Throws balls
+motorLift:{type:"motor"}, //Lifts scorer
+servoGrabber:{type:"servo",hardwareName:"grabber"}, //Locks hood
+}
+
+-----Robot.jftc-----
+public class Teleop extends OpMode{
+	public void start(){
+		motorThrower.setPower(100);
+	}
+	public void run(){}
+	public void stop(){}
+}
